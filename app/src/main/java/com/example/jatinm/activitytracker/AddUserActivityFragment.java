@@ -8,8 +8,8 @@ import android.os.Bundle;
  * Activity for adding a new activity to track.
  */
 public class AddUserActivityFragment extends Activity {
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_new);
-//    }
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_new);
+    }
 }
