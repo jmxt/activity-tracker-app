@@ -2,13 +2,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
-
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="text|textCapCharacters|textAutoCorrect|textShortMessage"
+        android:inputType="text|textCapWords|textAutoCorrect|textShortMessage"
         android:ems="10"
-        android:id="@+id/editText"
-        android:hint="Name" />
+        android:id="@+id/new_activity_name"
+        android:hint="Type activity name" />
 
 </LinearLayout>

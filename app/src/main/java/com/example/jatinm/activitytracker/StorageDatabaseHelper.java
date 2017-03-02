@@ -25,59 +25,6 @@ import static com.example.jatinm.activitytracker.StorageContract.UserActivityTab
  */
 public class StorageDatabaseHelper extends SQLiteOpenHelper {
 
-    public static final ContentValues[] DUMMY_CONTENT_VALUES_ACTIVITY_TABLE = new ContentValues[4];
-
-    static {
-        DUMMY_CONTENT_VALUES_ACTIVITY_TABLE[0] = new ContentValues();
-        DUMMY_CONTENT_VALUES_ACTIVITY_TABLE[0].put(
-                ACTIVITY_NAME, "Piano");
-        DUMMY_CONTENT_VALUES_ACTIVITY_TABLE[1] = new ContentValues();
-        DUMMY_CONTENT_VALUES_ACTIVITY_TABLE[1].put(
-                ACTIVITY_NAME, "Soccer");
-        DUMMY_CONTENT_VALUES_ACTIVITY_TABLE[2] = new ContentValues();
-        DUMMY_CONTENT_VALUES_ACTIVITY_TABLE[2].put(
-                ACTIVITY_NAME, "Walking");
-        DUMMY_CONTENT_VALUES_ACTIVITY_TABLE[3] = new ContentValues();
-        DUMMY_CONTENT_VALUES_ACTIVITY_TABLE[3].put(
-                ACTIVITY_NAME, "Hacking");
-    }
-
-    public static final ContentValues[] DUMMY_CONTENT_VALUES_JOURNAL_TABLE = new ContentValues[4];
-
-    static {
-        DUMMY_CONTENT_VALUES_JOURNAL_TABLE[0] = new ContentValues();
-        DUMMY_CONTENT_VALUES_JOURNAL_TABLE[0].put(
-                DATE, System.currentTimeMillis() / 1000);
-        DUMMY_CONTENT_VALUES_JOURNAL_TABLE[0].put(
-                ACTIVITY_TIME_SPENT, 100);
-        DUMMY_CONTENT_VALUES_JOURNAL_TABLE[0].put(
-                ACTIVITY_ID, 1);
-
-        DUMMY_CONTENT_VALUES_JOURNAL_TABLE[1] = new ContentValues();
-        DUMMY_CONTENT_VALUES_JOURNAL_TABLE[1].put(
-                DATE, System.currentTimeMillis() / 1000 - 90400);
-        DUMMY_CONTENT_VALUES_JOURNAL_TABLE[1].put(
-                ACTIVITY_TIME_SPENT, 200);
-        DUMMY_CONTENT_VALUES_JOURNAL_TABLE[1].put(
-                ACTIVITY_ID, 2);
-
-        DUMMY_CONTENT_VALUES_JOURNAL_TABLE[2] = new ContentValues();
-        DUMMY_CONTENT_VALUES_JOURNAL_TABLE[2].put(
-                DATE, System.currentTimeMillis() / 1000);
-        DUMMY_CONTENT_VALUES_JOURNAL_TABLE[2].put(
-                ACTIVITY_TIME_SPENT, 10);
-        DUMMY_CONTENT_VALUES_JOURNAL_TABLE[2].put(
-                ACTIVITY_ID, 3);
-
-        DUMMY_CONTENT_VALUES_JOURNAL_TABLE[3] = new ContentValues();
-        DUMMY_CONTENT_VALUES_JOURNAL_TABLE[3].put(
-                DATE, System.currentTimeMillis() / 1000);
-        DUMMY_CONTENT_VALUES_JOURNAL_TABLE[3].put(
-                ACTIVITY_TIME_SPENT, 10);
-        DUMMY_CONTENT_VALUES_JOURNAL_TABLE[3].put(
-                ACTIVITY_ID, 4);
-    }
-
     private SQLiteDatabase mDatabase;
 
     public Cursor runQueryToFetchContentForDashboard() {
@@ -112,9 +59,16 @@ public class StorageDatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(ACTIVITY_TIME_SPENT, increment);
 
         long result = mDatabase.insert(JT, null, contentValues);
-        if (result < 0) {
-            Log.e("jatin", "error while adding the increment");
+        if (result == -1) {
+            Log.e("ActivityTracker", "Error incrementing activity id:" + activityId);
         }
+    }
+
+    public void addNewActivity(@NonNull String activityName) {
+        mDatabase = getWritableDatabase();
+        ContentValues newRow = new ContentValues();
+        newRow.put(ACTIVITY_NAME, activityName);
+        mDatabase.insert(UAT, null, newRow);
     }
 
     public static String getTC(String tableName, String column) {
@@ -143,13 +97,6 @@ public class StorageDatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(StorageContract.SQL_CREATE_ACTIVITY_TABLE);
         db.execSQL(StorageContract.SQL_CREATE_JOURNAL_TABLE);
-
-        for (ContentValues contentValues : DUMMY_CONTENT_VALUES_ACTIVITY_TABLE) {
-            db.insert(UAT, null, contentValues);
-        }
-        for (ContentValues contentValues : DUMMY_CONTENT_VALUES_JOURNAL_TABLE) {
-            db.insert(JT, null, contentValues);
-        }
     }
 
     /**
