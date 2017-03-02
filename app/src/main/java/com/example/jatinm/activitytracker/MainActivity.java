@@ -1,11 +1,9 @@
 package com.example.jatinm.activitytracker;
 
-import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -18,7 +16,7 @@ import android.widget.GridView;
 import android.widget.ListAdapter;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, RefreshActivityListener {
     private GridView mUserActivityListView;
     private ListAdapter mUserActivityListAdapter;
     private StorageDatabaseHelper mStorageDatabaseHelper;
@@ -26,22 +24,20 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mStorageDatabaseHelper = new StorageDatabaseHelper(this);
         setContentView(R.layout.activity_home);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton createNewActivity = (FloatingActionButton) findViewById(R.id.create_activity);
+        FloatingActionButton createNewActivity =
+                (FloatingActionButton) findViewById(R.id.create_activity);
         createNewActivity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Keeping this here for feedback. Remove when done.
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-//                FragmentManager manager = getFragmentManager();
-//                FragmentTransaction transaction = manager.beginTransaction();
-//                transaction.add(R.id.fragment_content_frame, new AddUserActivityFragment());
-//                transaction.commit();
-                startAddNewActivity();
+                AddNewActivityDialogFragment fragment = new AddNewActivityDialogFragment();
+                fragment.setDatabaseHelper(mStorageDatabaseHelper);
+                fragment.setRefreshListener(MainActivity.this);
+                fragment.show(getFragmentManager(), "new_activity_tag");
             }
         });
 
@@ -55,13 +51,12 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         mUserActivityListView = (GridView) findViewById(R.id.user_activity_list);
-        mStorageDatabaseHelper = new StorageDatabaseHelper(this);
         new FetchDashboardContentAsyncTask(this, mStorageDatabaseHelper).execute();
     }
 
-    private void startAddNewActivity() {
-        Intent intent = new Intent(this, AddUserActivityFragment.class);
-        startActivity(intent);
+    @Override
+    public void onRefresh() {
+        new FetchDashboardContentAsyncTask(this, mStorageDatabaseHelper).execute();
     }
 
     public void initializeListView(Cursor cursor) {
@@ -107,21 +102,6 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;

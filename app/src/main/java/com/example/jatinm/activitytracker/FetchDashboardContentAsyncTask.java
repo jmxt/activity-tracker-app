@@ -2,12 +2,14 @@ package com.example.jatinm.activitytracker;
 
 import android.database.Cursor;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 
 public class FetchDashboardContentAsyncTask extends AsyncTask<Void, Void, Cursor> {
-    MainActivity mMainActivity;
-    StorageDatabaseHelper mStorageDatabaseHelper;
+    @NonNull private MainActivity mMainActivity;
+    @NonNull private StorageDatabaseHelper mStorageDatabaseHelper;
 
-    FetchDashboardContentAsyncTask(MainActivity mainActivity, StorageDatabaseHelper storageDatabaseHelper) {
+    public FetchDashboardContentAsyncTask(
+            @NonNull MainActivity mainActivity, @NonNull StorageDatabaseHelper storageDatabaseHelper) {
         mMainActivity = mainActivity;
         mStorageDatabaseHelper = storageDatabaseHelper;
     }
